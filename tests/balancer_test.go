@@ -8,6 +8,7 @@ import (
 	"testing"
 )
 
+// TestLoadBalancer tests the load balancer's routing functionality
 func TestLoadBalancer(t *testing.T) {
 	// Define mock servers with responses
 	mockServer1 := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -32,20 +33,25 @@ func TestLoadBalancer(t *testing.T) {
 	// Initialize LoadBalancer
 	lb := balancer.NewLoadBalancer(cfg)
 
-	// Create a test HTTP server to handle requests and use the LoadBalancer
-	testServer := httptest.NewServer(http.HandlerFunc(lb.HandleRequest))
-	defer testServer.Close()
+	// Start the LoadBalancer in a goroutine
+	go lb.Start()
+
+	// Allow some time for the server to start
+	// Replace this with a more robust way of checking server readiness if needed
+	//time.Sleep(time.Second)
+
+	// Create a test HTTP client to send requests to the LoadBalancer
+	client := &http.Client{}
 
 	// Test case 1: Check if the load balancer forwards requests correctly
 	t.Run("TestLoadBalancing", func(t *testing.T) {
-		// Make request to the test server (which is actually the LoadBalancer)
-		resp, err := http.Get(testServer.URL)
+		resp, err := client.Get("http://localhost:8080") // Adjust port based on how `Start` is configured
 		if err != nil {
 			t.Fatalf("Failed to make request: %v", err)
 		}
 		defer resp.Body.Close()
 
-		expected := "Server 1 Response"
+		expected := "Server 1 Response" // Expected response based on round-robin
 		if got := readBody(resp); got != expected {
 			t.Errorf("Expected response %s but got %s", expected, got)
 		}
@@ -54,7 +60,7 @@ func TestLoadBalancer(t *testing.T) {
 	// Test case 2: Check if requests are distributed in a round-robin manner
 	t.Run("TestRoundRobin", func(t *testing.T) {
 		for i := 0; i < 4; i++ {
-			resp, err := http.Get(testServer.URL)
+			resp, err := client.Get("http://localhost:8080") // Adjust port based on how `Start` is configured
 			if err != nil {
 				t.Fatalf("Failed to make request: %v", err)
 			}
