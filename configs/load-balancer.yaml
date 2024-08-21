@@ -13,4 +13,4 @@ scaling:
 
 monitor:
   enabled: true
-  port: 9090
+  port: 5000

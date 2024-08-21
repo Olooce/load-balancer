@@ -9,7 +9,8 @@ import (
 
 func main() {
 	// Load configuration
-	cfg, err := config.LoadConfig("../../configs/load-balancer.yaml")
+	cfg, err := config.LoadConfig("configs/load-balancer.yaml")
+
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
