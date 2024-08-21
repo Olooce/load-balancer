@@ -13,9 +13,6 @@ This project is a Go-based Load Balancer that evenly distributes incoming client
 - **Monitoring**: Integrated web-based monitoring to track load balancer performance and server status.
 - **Example Servers**: Simple Go HTTP servers included to simulate and test load balancing.
 
-## Project Structure
-
-```
 load-balancer/
 ├── cmd/
 │   └── load-balancer/
@@ -43,12 +40,13 @@ load-balancer/
 │   ├── Dockerfile            # Dockerfile for deploying the load balancer
 │   └── kubernetes.yaml       # Kubernetes deployment configuration
 ├── docs/
-│   └── README.md             # Project documentation (this file)
+│   └──                       # Documentation for the project
 ├── scripts/
 │   └── install_deps.sh       # Script to install dependencies
 └── tests/
-    └── balancer_test.go      # Unit tests for the load balancer
-```
+│   └── balancer_test.go      # Unit tests for the load balancer
+└── README.md                 # Project overview (this file)
+
 
 ## Installation
 
