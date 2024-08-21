@@ -1,0 +1,16 @@
+servers:
+  - address: "http://localhost:8081"
+    weight: 1
+  - address: "http://localhost:8082"
+    weight: 2
+
+load_balancing_algorithm: "round_robin"
+
+scaling:
+  mode: "horizontal"  # options: horizontal, vertical
+  max_servers: 10
+  min_servers: 2
+
+monitor:
+  enabled: true
+  port: 9090
