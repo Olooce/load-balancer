@@ -1,5 +1,4 @@
 ---
-
 ### 1. Build Script (`build.sh`)
 
 **Example Run**:
