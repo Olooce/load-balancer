@@ -13,6 +13,7 @@ This project is a Go-based Load Balancer that evenly distributes incoming client
 - **Monitoring**: Integrated web-based monitoring to track load balancer performance and server status.
 - **Example Servers**: Simple Go HTTP servers included to simulate and test load balancing.
 
+```
 load-balancer/
 ├── cmd/
 │   └── load-balancer/
@@ -46,7 +47,7 @@ load-balancer/
 └── tests/
 │   └── balancer_test.go      # Unit tests for the load balancer
 └── README.md                 # Project overview (this file)
-
+```
 
 ## Installation
 
