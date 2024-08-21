@@ -15,7 +15,7 @@ go mod tidy
 echo "Verifying dependencies..."
 go mod verify
 
-# Optionally, run tests to ensure everything works correctly
+# Run tests to ensure everything works correctly
 echo "Running tests..."
 go test ./...
 
