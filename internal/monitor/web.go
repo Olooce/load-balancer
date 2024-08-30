@@ -6,6 +6,19 @@ import (
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+// Define Prometheus metrics
+var (
+	// Define a new counter vector with a label for the server name
+	requestCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
+			Help: "Total number of HTTP requests processed, labeled by server.",
+		},
+		[]string{"server"}, // Labels by server
+	)
 )
 
 // Template for the live-updating HTML page
@@ -67,8 +80,11 @@ type PageData struct {
 }
 
 func Start(port int) {
+	// Register Prometheus metrics
+	prometheus.MustRegister(requestCount)
+
 	http.HandleFunc("/monitor", func(w http.ResponseWriter, r *http.Request) {
-		// Create a new Prometheus registry and register the request count metric
+		// Create a new Prometheus registry
 		registry := prometheus.NewRegistry()
 		registry.MustRegister(requestCount)
 
@@ -87,6 +103,7 @@ func Start(port int) {
 				if len(labels) > 0 {
 					serverName := labels[0].GetValue()
 					value := m.GetCounter().GetValue()
+					fmt.Printf("Parsed server: %s with request count: %d\n", serverName, int(value)) // Debug output
 					data.Servers = append(data.Servers, ServerData{
 						Name:         serverName,
 						RequestCount: int(value),
@@ -105,6 +122,22 @@ func Start(port int) {
 		}
 	})
 
+	// Expose Prometheus metrics endpoint
+	http.Handle("/metrics", promhttp.Handler())
+
 	fmt.Printf("Starting server on port %d\n", port)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+}
+
+func main() {
+	Start(8080)
+
+	// Example of how to increment metrics
+	go func() {
+		for {
+			requestCount.With(prometheus.Labels{"server": "server1"}).Inc()
+			requestCount.With(prometheus.Labels{"server": "server2"}).Inc()
+			requestCount.With(prometheus.Labels{"server": "server3"}).Inc()
+		}
+	}()
 }
