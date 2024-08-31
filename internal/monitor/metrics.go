@@ -1,23 +1,13 @@
 package monitor
 
-import (
-	"github.com/prometheus/client_golang/prometheus"
-)
+// Importing necessary packages
+// import (
+// 	"github.com/prometheus/client_golang/prometheus"
+// )
 
-var (
-	requestCount = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "load_balancer_requests_total",
-			Help: "Total number of requests received by the load balancer",
-		},
-		[]string{"server"},
-	)
-)
+// Since the metrics are already defined in common.go, we don't need to redefine them here.
+// Just use the functions and metrics from common.go directly.
 
-func init() {
-	prometheus.MustRegister(requestCount)
-}
+// Any other specific logic related to metrics can be handled here.
+// For now, the file might remain empty as common.go has all necessary functionality.
 
-func RecordRequest(server string) {
-	requestCount.With(prometheus.Labels{"server": server}).Inc()
-}
