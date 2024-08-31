@@ -1,16 +1,26 @@
 package monitor
 
 import (
-    "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
+// Shared metric for request counting across servers
 var (
-    // Define a new counter vector with a label for the server name
-    requestCount = prometheus.NewCounterVec(
-        prometheus.CounterOpts{
-            Name: "http_requests_total",
-            Help: "Total number of HTTP requests processed, labeled by server.",
-        },
-        []string{"server"}, // Labels by server
-    )
+	RequestCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "load_balancer_requests_total",
+			Help: "Total number of requests received by the load balancer",
+		},
+		[]string{"server"}, // Label by server
+	)
 )
+
+// Initialize and register Prometheus metrics
+func init() {
+	prometheus.MustRegister(RequestCount)
+}
+
+// Increment the request counter for a specific server
+func RecordRequest(server string) {
+	RequestCount.With(prometheus.Labels{"server": server}).Inc()
+}

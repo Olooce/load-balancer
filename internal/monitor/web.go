@@ -1,27 +1,13 @@
 package monitor
 
 import (
-    "fmt"
-    "html/template"
-    "net/http"
-
-    "github.com/prometheus/client_golang/prometheus"
-    "github.com/prometheus/client_golang/prometheus/promhttp"
+	"fmt"
+	"html/template"
+	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Define Prometheus metrics
-var (
-	// Define a new counter vector with a label for the server name
-	requestCount = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "http_requests_total",
-			Help: "Total number of HTTP requests processed, labeled by server.",
-		},
-		[]string{"server"}, // Labels by server
-	)
-)
-
-// Template for the live-updating HTML page
+// HTML template for displaying server metrics
 const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="en">
@@ -70,32 +56,27 @@ const htmlTemplate = `
 </html>
 `
 
+// ServerData represents the data for each server
 type ServerData struct {
 	Name         string
 	RequestCount int
 }
 
+// PageData contains the data for the HTML template
 type PageData struct {
 	Servers []ServerData
 }
 
+// Start initializes the monitoring server on the specified port
 func Start(port int) {
-	// Register Prometheus metrics
-	prometheus.MustRegister(requestCount)
-
 	http.HandleFunc("/monitor", func(w http.ResponseWriter, r *http.Request) {
-		// Create a new Prometheus registry
-		registry := prometheus.NewRegistry()
-		registry.MustRegister(requestCount)
-
-		// Gather the metrics
-		metrics, err := registry.Gather()
+		// Gather metrics from Prometheus
+		metrics, err := prometheus.DefaultGatherer.Gather()
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		// Extract and parse the metrics
 		var data PageData
 		for _, mf := range metrics {
 			for _, m := range mf.GetMetric() {
@@ -103,7 +84,6 @@ func Start(port int) {
 				if len(labels) > 0 {
 					serverName := labels[0].GetValue()
 					value := m.GetCounter().GetValue()
-					fmt.Printf("Parsed server: %s with request count: %d\n", serverName, int(value)) // Debug output
 					data.Servers = append(data.Servers, ServerData{
 						Name:         serverName,
 						RequestCount: int(value),
@@ -130,14 +110,5 @@ func Start(port int) {
 }
 
 func main() {
-	Start(8080)
-
-	// Example of how to increment metrics
-	go func() {
-		for {
-			requestCount.With(prometheus.Labels{"server": "server1"}).Inc()
-			requestCount.With(prometheus.Labels{"server": "server2"}).Inc()
-			requestCount.With(prometheus.Labels{"server": "server3"}).Inc()
-		}
-	}()
+	Start(8080)  // Start the monitoring server on port 8080
 }
