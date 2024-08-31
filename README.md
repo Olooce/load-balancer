@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project is a Go-based Load Balancer that evenly distributes incoming client requests across multiple servers. The load balancer supports both horizontal and vertical scaling and includes a built-in monitoring system accessible through a web interface. The project also provides example server implementations to test and demonstrate the load balancer's functionality.
+This project, still a work in progress, is a Go-based Load Balancer that evenly distributes incoming client requests across multiple servers. The load balancer supports both horizontal and vertical scaling and includes a built-in monitoring system accessible through a web interface. The project also provides example server implementations to test and demonstrate the load balancer's functionality.
 
 ## Features
 
