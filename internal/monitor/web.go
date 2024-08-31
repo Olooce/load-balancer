@@ -1,12 +1,12 @@
 package monitor
 
 import (
-	"fmt"
-	"html/template"
-	"net/http"
+    "fmt"
+    "html/template"
+    "net/http"
 
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+    "github.com/prometheus/client_golang/prometheus"
+    "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Define Prometheus metrics
